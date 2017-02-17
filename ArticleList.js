@@ -14,12 +14,14 @@ export default class ArticleList extends Component
 {
     constructor(props) {
         super(props);
+        this.items = [];
         this.state = {
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2,
             }),
-            loaded: false,
-            page:1
+            isLoading: true,
+            page:1,
+            pageCount: 0
         };
     }
     componentDidMount() {
@@ -30,10 +32,11 @@ export default class ArticleList extends Component
         fetch(REQUEST_URL)
         .then((response) => response.json())
         .then((responseData) => {
-            const items = responseData.items;
+            this.items = this.items.concat(responseData.items);
             this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(items),
-                loaded: true,
+                dataSource: this.state.dataSource.cloneWithRows(this.items),
+                pageCount:responseData._meta.pageCount,
+                isLoading: false
             });
         })
         .done();
@@ -48,8 +51,19 @@ export default class ArticleList extends Component
             </View>
         );
     }
+    onEndReached() {
+        if (this.state.isLoading || this.state.page >= this.state.pageCount) {
+            return;
+        }
+
+        this.setState({
+            isLoading: true
+        });
+
+        this.fetchData();
+    }
     render() {
-        if(!this.state.loaded) {
+        if(this.state.isLoading) {
             return this.renderLoadingView();
         }
 
@@ -57,11 +71,10 @@ export default class ArticleList extends Component
             <ListView
                 dataSource={this.state.dataSource}
                 renderRow={this.renderArticle.bind(this)}
+                onEndReached={this.onEndReached.bind(this)}
+                onEndReachedThreshold={10}
             />
         );
-    }
-    onEndReached() {
-        this.fetchData();
     }
     renderArticle(article) {
         return (

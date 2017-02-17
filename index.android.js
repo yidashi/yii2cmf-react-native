@@ -42,12 +42,10 @@ export default class app extends Component {
                                 title:route.name,
                                 tintColor:'#fff'
                             };
-                            const leftButtonConfig = {
-                                title:'返回'
-                            };
+                            let leftButtonConfig = {title:''};
                             if(route.name != '首页') {
-                                const leftButtonConfig = <Back
-                                    style={{ marginLeft: 8 }}
+                                leftButtonConfig = <Back
+                                    style={{ marginLeft: 8}}
                                     onPress={() => navigator.pop()}
                                     />;
                             }
@@ -57,7 +55,6 @@ export default class app extends Component {
                                         style={styles.navbar}
                                         title={titleConfig}
                                         leftButton={leftButtonConfig}
-                                        statusBar={{hidden:true}}
                                     />
                                     <Screen {...route.params} navigator={navigator} />
                                 </View>
@@ -71,8 +68,7 @@ export default class app extends Component {
 }
 const styles = StyleSheet.create({
     navbar:{
-        flex:1,
-        backgroundColor:'#00a2ed',
+        backgroundColor:'#f16705',
     },
 });
 AppRegistry.registerComponent('app', () => app);

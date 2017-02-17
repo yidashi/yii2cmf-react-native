@@ -10,7 +10,7 @@ export default class Back extends Component {
       <TouchableOpacity onPress={this.props.onPress}>
         <Image
           source={require('./assets/ic_back_white.png')}
-          style={[{ width: 20, height: 20, }, this.props.style]}/>
+          style={[{ width: 25, height: 25, marginTop: 10}, this.props.style]}/>
       </TouchableOpacity>
     );
   }

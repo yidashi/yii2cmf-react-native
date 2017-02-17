@@ -12,16 +12,20 @@ export default class ArticleItem extends Component
 {
     render() {
         let article = this.props.article;
+        let image;
+        if (article.cover != '') {
+            image = <Image
+                source={{uri: article.cover}}
+                style={styles.cover}
+            />;
+        }
         return (
             <TouchableOpacity
                 onPress={() => this.props.onPress()}
                 >
                 <View style={styles.row}>
                     <Text style={styles.title}>{article.title}</Text>
-                    <Image
-                        source={{uri: article.cover}}
-                        style={styles.cover}
-                    />
+                    {image}
                 </View>
             </TouchableOpacity>
         );
