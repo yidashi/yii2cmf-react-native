@@ -28,23 +28,20 @@ import UserProfile from './UserProfile'
 import px2dp from '../util'
 
 import Icon from 'react-native-vector-icons/Ionicons'
+import GlobalConfig from '../../GlobalConfig';
 let {width, height} = Dimensions.get('window')
-
+let API_URL = GlobalConfig.apiUrl.getUserInfo;
 export default class My extends Component {
     constructor(props){
         super(props)
         this.state = {
-            isRefreshing: false
+            isRefreshing: false,
+            user: {}
         }
         this.config = [
+            {icon:"ios-heart", name:"我的投稿", color:"#fc7b53"},
+            {icon:"ios-heart", name:"我的点赞", color:"#fc7b53"},
             {icon:"ios-heart", name:"我的收藏", color:"#fc7b53"},
-            {icon:"md-images", name:"美食相册"},
-            {icon:"logo-usd", name:"推荐有奖", subName:"5元现金", color:"#fc7b53"},
-            {icon:"ios-cart", name:"积分商城", subName:"0元好物在这里", color:"#94d94a"},
-            {icon:"ios-medal", name:"饿了吗会员卡", subName:"未开通", color:"#ffc636"},
-            {icon:"md-flower", name:"服务中心"},
-            {icon:"ios-outlet", name:"欢迎评分"},
-            {icon:"md-contacts", name:"加盟合作"},
         ]
     }
     goPage(key, data = {}){
@@ -64,13 +61,13 @@ export default class My extends Component {
     rightPress(){
         this.props.navigator.push({
             component: Setting,
-            args: {}
+            params: {}
         });
     }
     goProfile(){
         this.props.navigator.push({
             component: UserProfile,
-            args: {}
+            params: {}
         });
     }
     componentDidMount(){
@@ -78,9 +75,18 @@ export default class My extends Component {
     }
     _onRefresh(){
         this.setState({isRefreshing: true});
-        setTimeout(() => {
-            this.setState({isRefreshing: false});
-        }, 1500)
+        this._fetchData();
+    }
+    _fetchData() {
+        fetch(API_URL + 1)
+        .then((response) => response.json())
+        .then((responseData) => {
+            this.setState({
+                isRefreshing: false,
+                article: responseData,
+            });
+        })
+        .done();
     }
     _renderListItem(){
         return this.config.map((item, i) => {
@@ -90,7 +96,8 @@ export default class My extends Component {
             return (<Item key={i} {...item}/>)
         })
     }
-    render(){
+    render() {
+        let user = this.state.user;
         return (
             <View style={{flex: 1, backgroundColor: "#f3f3f3"}}>
                 <NavBar
@@ -103,14 +110,14 @@ export default class My extends Component {
                 <ScrollView
                     style={styles.scrollView}
                     refreshControl={
-            <RefreshControl
-              refreshing={this.state.isRefreshing}
-              onRefresh={this._onRefresh.bind(this)}
-              tintColor="#fff"
-              colors={['#ddd', '#0398ff']}
-              progressBackgroundColor="#ffffff"
-            />
-          }
+                        <RefreshControl
+                          refreshing={this.state.isRefreshing}
+                          onRefresh={this._onRefresh.bind(this)}
+                          tintColor="#fff"
+                          colors={['#ddd', '#0398ff']}
+                          progressBackgroundColor="#ffffff"
+                        />
+                    }
                 >
                     <View style={{minHeight: height - 64 - px2dp(46), paddingBottom: 100, backgroundColor: "#f3f3f3"}}>
                         <TouchableWithoutFeedback onPress={this.goProfile.bind(this)}>
@@ -160,7 +167,7 @@ export default class My extends Component {
 const styles = StyleSheet.create({
     scrollView: {
         marginBottom: px2dp(46),
-        backgroundColor: "#0398ff"
+        backgroundColor: "#000"
     },
     userHead: {
         justifyContent: "space-between",

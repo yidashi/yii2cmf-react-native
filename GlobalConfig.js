@@ -8,6 +8,7 @@ GlobalConfig.apiUrl2 = {
 }
 GlobalConfig.apiUrl = {
     articleList:'http://www.51siyuan.cn/api/v1/articles',
-    articleDetail:'http://www.51siyuan.cn/api/v1/articles/'
+    articleDetail:'http://www.51siyuan.cn/api/v1/articles/',
+    getUserInfo:'http://www.51siyuan.cn/api/v1/users/',
 }
 export default GlobalConfig
