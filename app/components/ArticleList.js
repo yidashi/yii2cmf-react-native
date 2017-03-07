@@ -7,8 +7,8 @@ import {
     StyleSheet
 } from 'react-native';
 import ArticleItem from './ArticleItem';
-import ArticleDetailScreen from './ArticleDetailScreen';
-import GlobalConfig from './GlobalConfig';
+import ArticleDetail from '../pages/ArticleDetail';
+import GlobalConfig from '../../GlobalConfig';
 var API_URL = GlobalConfig.apiUrl.articleList;
 export default class ArticleList extends Component
 {
@@ -86,8 +86,7 @@ export default class ArticleList extends Component
     }
     selectArticle(article) {
         this.props.navigator.push({
-            name: '详情',
-            Component: ArticleDetailScreen,
+            component: ArticleDetail,
             params:{
                 articleID:article.id
             }

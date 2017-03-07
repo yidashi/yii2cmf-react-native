@@ -2,18 +2,17 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    WebView,
     StyleSheet,
     Platform,
     ActivityIndicatorIOS,
     TouchableOpacity,
+    BackAndroid
 } from 'react-native';
-
-import HomeScreen from './HomeScreen';
-import DetailToolbar from './DetailToolbar';
-import GlobalConfig from './GlobalConfig';
+import MyWebView from '../components/MyWebView';
+import NavBar from '../components/NavBar';
+import GlobalConfig from '../../GlobalConfig';
 var API_URL = GlobalConfig.apiUrl.articleDetail;
-class ArticleDetailScreen extends Component {
+export default class ArticleDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,15 +38,12 @@ class ArticleDetailScreen extends Component {
     componentDidMount() {
         this.fetchData();
     }
-
-    _pressButton() {
-        const navigator = this.props.navigator;
-        console.log(navigator);
-        if(navigator) {
-            navigator.pop();
-        }
+    back() {
+        this.props.navigator.pop()
     }
-
+    componentWillMount() {
+        BackAndroid.addEventListener('hardwareBackPress', this.back.bind(this));
+    }
     render() {
         if(this.state.isLoading) {
             return (
@@ -61,13 +57,19 @@ class ArticleDetailScreen extends Component {
                   + '</head><body>'
                   + this.state.article.html
                   + '</body></html>';
-                  console.log(html);
+                console.log(html);
                 return (
                     <View style={styles.container}>
-                        <WebView
+                        <NavBar
+                            title={this.state.article.title}
+                            leftIcon="ios-arrow-back"
+                            leftPress={this.back.bind(this)}
+                            rightPress={()=>{}}
+                        />
+                        <MyWebView
                             style={styles.content}
                             source={{html:html}}
-                        ></WebView>
+                        />
                     </View>
                 );
             }else {
@@ -84,12 +86,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5FCFF',
-  },
-  content: {
-    flex: 1,
-  },
-  footer:{
-      height:44
   }
 });
-export default ArticleDetailScreen
