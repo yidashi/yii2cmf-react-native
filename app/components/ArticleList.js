@@ -4,12 +4,14 @@ import {
     Text,
     ListView,
     TouchableOpacity,
-    StyleSheet
+    StyleSheet,
+    Dimensions,
+    RefreshControl
 } from 'react-native';
 import ArticleItem from './ArticleItem';
 import ArticleDetail from '../pages/ArticleDetail';
 import GlobalConfig from '../../GlobalConfig';
-var API_URL = GlobalConfig.apiUrl.articleList;
+var API_URL = GlobalConfig.apiHost + GlobalConfig.apiMap.articleList;
 export default class ArticleList extends Component
 {
     constructor(props) {
@@ -20,6 +22,9 @@ export default class ArticleList extends Component
                 rowHasChanged: (row1, row2) => row1 !== row2,
             }),
             isLoading: true,
+            isLoadingMore: false,
+            loaded: false,
+            isRefreshing: false,
             page:1,
             pageCount: 0
         };
@@ -30,21 +35,22 @@ export default class ArticleList extends Component
     fetchData() {
         REQUEST_URL = API_URL + '?module=base&page=' + this.state.page;
         fetch(REQUEST_URL)
-        .then((response) => response.json())
-        .then((responseData) => {
-            this.items = this.items.concat(responseData.items);
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(this.items),
-                pageCount:responseData._meta.pageCount,
-                isLoading: false
-            });
-        })
-        .done();
+            .then((response) => response.json())
+            .then((responseData) => {
+                this.items = this.items.concat(responseData.items);
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(this.items),
+                    pageCount:responseData._meta.pageCount,
+                    isLoading: false,
+                    isLoadingMore:false
+                });
+            })
+            .done();
         this.state.page++;
     }
     renderLoadingView() {
         return (
-            <View style={styles.row}>
+            <View style={styles.loading}>
                 <Text>
                     Loading...
                 </Text>
@@ -52,15 +58,30 @@ export default class ArticleList extends Component
         );
     }
     onEndReached() {
-        if (this.state.isLoading || this.state.page >= this.state.pageCount) {
+        if (this.state.isLoadingMore || this.state.page >= this.state.pageCount) {
             return;
         }
 
         this.setState({
-            isLoading: true
+            isLoadingMore: true
         });
 
         this.fetchData();
+    }
+    renderFooter() {
+        if(this.state.isLoadingMore) {
+            return (
+                <View style={styles.footer}>
+                <Text>正在加载...</Text>
+                </View>
+            );
+        } else if(this.state.page >= this.state.pageCount){
+            return(
+                <View style={styles.footer}>
+                    <Text style={{color: '#adadad'}}>没有更多了</Text>
+                </View>
+            );
+        }
     }
     render() {
         if(this.state.isLoading) {
@@ -70,21 +91,33 @@ export default class ArticleList extends Component
         return (
             <ListView
                 dataSource={this.state.dataSource}
-                renderRow={this.renderArticle.bind(this)}
+                renderRow={this.renderItem.bind(this)}
+                renderFooter={this.renderFooter.bind(this)}
                 onEndReached={this.onEndReached.bind(this)}
                 onEndReachedThreshold={10}
+                refreshControl={
+                <RefreshControl
+                  refreshing={this.state.isRefreshing}
+                  onRefresh={this.onRefresh}
+                  tintColor="#F3F3F3"
+                  title="刷新中..."
+                  titleColor="#9B9B9B"
+                  colors={['#F3F3F3', '#F3F3F3', '#F3F3F3']}
+                  progressBackgroundColor="#F3F3F3"
+                />
+              }
             />
         );
     }
-    renderArticle(article) {
+    renderItem(article) {
         return (
             <ArticleItem
                 article={article}
-                onPress={() => this.selectArticle(article)}
+                onPress={() => this.goDetail(article)}
             />
         );
     }
-    selectArticle(article) {
+    goDetail(article) {
         this.props.navigator.push({
             component: ArticleDetail,
             params:{
@@ -95,19 +128,25 @@ export default class ArticleList extends Component
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 10,
-    marginLeft: 10,
-    marginRight: 10,
-    marginVertical: 5,
-    borderColor: '#dddddd',
-    borderStyle: null,
-    borderWidth: 0.5,
-    borderRadius: 2,
-  }
+    loading: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        padding: 10,
+        marginLeft: 10,
+        marginRight: 10,
+        marginVertical: 5,
+        borderColor: '#dddddd',
+        borderStyle: null,
+        borderWidth: 0.5,
+        borderRadius: 2,
+    },
+    footer: {
+        width:Dimensions.get('window').width,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });

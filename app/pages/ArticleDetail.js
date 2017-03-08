@@ -11,7 +11,7 @@ import {
 import MyWebView from '../components/MyWebView';
 import NavBar from '../components/NavBar';
 import GlobalConfig from '../../GlobalConfig';
-var API_URL = GlobalConfig.apiUrl.articleDetail;
+var API_URL = GlobalConfig.apiHost + GlobalConfig.apiMap.articleDetail;
 export default class ArticleDetail extends Component {
     constructor(props) {
         super(props);

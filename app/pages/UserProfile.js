@@ -1,7 +1,3 @@
-/**
- * @author Lei
- * @repo https://github.com/stoneWeb/elm-react-native
- */
 'use strict';
 
 import React, { Component } from 'react'
@@ -22,6 +18,7 @@ export default class UserProfile extends Component {
     this.props.navigator.pop()
   }
   render(){
+    let user = this.props.user;
     return (
       <View style={{flex: 1, backgroundColor: "#f3f3f3"}}>
         <NavBar
@@ -30,17 +27,9 @@ export default class UserProfile extends Component {
           leftPress={this.back.bind(this)}
         />
         <ScrollView>
-          <Item name="头像" avatar={2} first={true}/>
-          <Item name="用户名" disable={true} subName="_平行时空"/>
-          <Text style={styles.title}>{"账号绑定"}</Text>
-          <Item name="手机" font="FontAwesome" icon="mobile" subName="135****0418"/>
-          <Item name="微信" color="#1bce4a" iconSize={15} font="FontAwesome" icon="wechat" subName="已绑定"/>
-          <Item name="QQ" color="#ce3c1b" iconSize={15} font="FontAwesome" icon="qq" subName="未绑定"/>
-          <Item name="微博" color="#fa7d3c" iconSize={16} font="FontAwesome" icon="weibo" subName="未绑定"/>
-          <Text style={styles.title}>{"安全设置"}</Text>
-          <Item name="登录密码" subName="未绑定"/>
-          <Item name="支付密码" subName="未绑定"/>
-          <Item name="小额免密支付"/>
+          <Item name="头像" avatar={{uri:user.avatar}} first={true}/>
+          <Item name="用户名" disable={true} subName={user.username} />
+          <Item name="个性签名" disable={true} subName={user.profile.signature} />
         </ScrollView>
       </View>
     )

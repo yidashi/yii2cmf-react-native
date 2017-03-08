@@ -53,7 +53,7 @@ export default class Item extends Component {
     subName: PropTypes.string,
     color: PropTypes.string,
     first: PropTypes.bool,
-    avatar: PropTypes.number,
+    avatar: PropTypes.object,
     disable: PropTypes.bool,
     iconSize: PropTypes.number,
     font: PropTypes.string,

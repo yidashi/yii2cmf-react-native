@@ -1,18 +1,15 @@
-/**
- * @author Lei
- * @repo https://github.com/stoneWeb/elm-react-native
- */
 'use strict';
 
 import React, { Component } from 'react'
 import {
   Text,
   View,
-  ScrollView
+  ScrollView,
+    AsyncStorage
 } from 'react-native'
 import NavBar from '../components/NavBar'
-import Item from '../components/Item'
-import UserProfile from './UserProfile'
+import Item from '../components/Item';
+import TabView from '../components/TabView';
 //FontAwesome
 export default class Setting extends Component {
   constructor(props){
@@ -21,11 +18,12 @@ export default class Setting extends Component {
   back(){
     this.props.navigator.pop()
   }
-  goProfile(){
-    this.props.navigator.push({
-        component: UserProfile,
-        args: {}
-    });
+  logout() {
+      AsyncStorage.removeItem('token', () => {
+          this.props.navigator.popToTop();
+          TabView.logout.bind(TabView);
+      });
+
   }
   render(){
     return (
@@ -36,10 +34,9 @@ export default class Setting extends Component {
           leftPress={this.back.bind(this)}
         />
         <ScrollView>
-          <Item name="账户安全" first={true} onPress={this.goProfile.bind(this)}/>
           <Item name="通用"/>
-          <Item name="关于饿了么" first={true}/>
-          <Item.Button name="退出登录" first={true}/>
+          <Item name="关于猿书" first={true}/>
+          <Item.Button name="退出登录" first={true} onPress={() => this.logout()}/>
         </ScrollView>
       </View>
     )

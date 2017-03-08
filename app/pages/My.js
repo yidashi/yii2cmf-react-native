@@ -18,7 +18,8 @@ import {
     TouchableHighlight,
     TouchableNativeFeedback,
     TouchableWithoutFeedback,
-    RefreshControl
+    RefreshControl,
+    AsyncStorage
 } from 'react-native'
 import LocalImg from '../images'
 import NavBar from '../components/NavBar'
@@ -30,13 +31,19 @@ import px2dp from '../util'
 import Icon from 'react-native-vector-icons/Ionicons'
 import GlobalConfig from '../../GlobalConfig';
 let {width, height} = Dimensions.get('window')
-let API_URL = GlobalConfig.apiUrl.getUserInfo;
+const API_URL = GlobalConfig.apiHost + GlobalConfig.apiMap.getUserInfo;
 export default class My extends Component {
     constructor(props){
         super(props)
         this.state = {
             isRefreshing: false,
-            user: {}
+            user: {
+                profile: {},
+                friend: {
+                    follow_num: 0,
+                    fans_num:0
+                }
+            }
         }
         this.config = [
             {icon:"ios-heart", name:"我的投稿", color:"#fc7b53"},
@@ -55,9 +62,6 @@ export default class My extends Component {
             })
         }
     }
-    leftPress(){
-
-    }
     rightPress(){
         this.props.navigator.push({
             component: Setting,
@@ -67,7 +71,7 @@ export default class My extends Component {
     goProfile(){
         this.props.navigator.push({
             component: UserProfile,
-            params: {}
+            params: {user:this.state.user}
         });
     }
     componentDidMount(){
@@ -78,15 +82,17 @@ export default class My extends Component {
         this._fetchData();
     }
     _fetchData() {
-        fetch(API_URL + 1)
-        .then((response) => response.json())
-        .then((responseData) => {
-            this.setState({
-                isRefreshing: false,
-                article: responseData,
-            });
+        AsyncStorage.getItem('token', (error, result) => {
+            fetch(API_URL + '?expand=profile,friend&access_token=' + result)
+                .then((response) => response.json())
+                .then((responseData) => {
+                    this.setState({
+                        isRefreshing: false,
+                        user: responseData,
+                    });
+                })
+                .done();
         })
-        .done();
     }
     _renderListItem(){
         return this.config.map((item, i) => {
@@ -102,8 +108,6 @@ export default class My extends Component {
             <View style={{flex: 1, backgroundColor: "#f3f3f3"}}>
                 <NavBar
                     title="我的"
-                    leftIcon="ios-notifications-outline"
-                    leftPress={this.leftPress.bind(this)}
                     rightIcon="ios-settings-outline"
                     rightPress={this.rightPress.bind(this)}
                 />
@@ -123,12 +127,11 @@ export default class My extends Component {
                         <TouchableWithoutFeedback onPress={this.goProfile.bind(this)}>
                             <View style={styles.userHead}>
                                 <View style={{flex: 1,flexDirection: "row"}}>
-                                    <Image source={LocalImg.avatar} style={{width: px2dp(60), height: px2dp(60), borderRadius: px2dp(30)}}/>
+                                    <Image source={{uri:user.avatar}} style={{width: px2dp(60), height: px2dp(60), borderRadius: px2dp(30)}}/>
                                     <View style={{flex: 1, marginLeft: 10, paddingVertical: 5}}>
-                                        <Text style={{color: "#333", fontSize: px2dp(18)}}>_平行时空</Text>
+                                        <Text style={{color: "#333", fontSize: px2dp(18)}}>{user.username}</Text>
                                         <View style={{marginTop: px2dp(10), flexDirection: "row"}}>
-                                            <Icon name="ios-phone-portrait-outline" size={px2dp(14)} color="#333" />
-                                            <Text style={{color: "#333", fontSize: 13, paddingLeft: 5}}>135****0418</Text>
+                                            <Text style={{color: "#333", fontSize: 13, paddingLeft: 5}}>{user.profile.signature}</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -138,20 +141,20 @@ export default class My extends Component {
                         <View style={styles.numbers}>
                             <TouchableWithoutFeedback>
                                 <View style={styles.numItem}>
-                                    <Text style={{color: "#f90", fontSize: 18, textAlign: "center", fontWeight: "bold"}}>{"999999.0元"}</Text>
+                                    <Text style={{color: "#f90", fontSize: 18, textAlign: "center", fontWeight: "bold"}}>{user.profile.money}</Text>
                                     <Text style={{color: "#333", fontSize: 12, textAlign: "center", paddingTop: 5}}>{"余额"}</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
                                 <View style={[styles.numItem,{borderLeftWidth: 1, borderLeftColor: "#f5f5f5",borderRightWidth: 1, borderRightColor: "#f5f5f5"}]}>
-                                    <Text style={{color: "#ff5f3e", fontSize: 18, textAlign: "center", fontWeight: "bold"}}>{"1940个"}</Text>
-                                    <Text style={{color: "#333", fontSize: 12, textAlign: "center", paddingTop: 5}}>{"优惠"}</Text>
+                                    <Text style={{color: "#ff5f3e", fontSize: 18, textAlign: "center", fontWeight: "bold"}}>{user.friend.follow_num}</Text>
+                                    <Text style={{color: "#333", fontSize: 12, textAlign: "center", paddingTop: 5}}>{"关注"}</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback>
                                 <View style={styles.numItem}>
-                                    <Text style={{color: "#6ac20b", fontSize: 18, textAlign: "center", fontWeight: "bold"}}>{"999999分"}</Text>
-                                    <Text style={{color: "#333", fontSize: 12, textAlign: "center", paddingTop: 5}}>{"积分"}</Text>
+                                    <Text style={{color: "#6ac20b", fontSize: 18, textAlign: "center", fontWeight: "bold"}}>{user.friend.fans_num}</Text>
+                                    <Text style={{color: "#333", fontSize: 12, textAlign: "center", paddingTop: 5}}>{"粉丝"}</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>
