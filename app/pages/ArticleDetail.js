@@ -25,7 +25,7 @@ export default class ArticleDetail extends Component {
             isLoading: true,
             article: null,
         });
-        fetch(API_URL + this.props.articleID + '?expand=html')
+        fetch(API_URL + this.props.articleID + '?expand=data')
         .then((response) => response.json())
         .then((responseData) => {
             this.setState({
@@ -55,9 +55,8 @@ export default class ArticleDetail extends Component {
             if(this.state.article) {
                 let html = '<!DOCTYPE html><html><head>'
                   + '</head><body>'
-                  + this.state.article.html
+                  + this.state.article.data.content
                   + '</body></html>';
-                console.log(html);
                 return (
                     <View style={styles.container}>
                         <NavBar

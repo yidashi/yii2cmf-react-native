@@ -11,6 +11,7 @@ export default GlobalConfig = {
         login:'/auth/login',
         register:'/auth/register',
         logout:'/auth/logout',
-        getNotify:'/notify'
+        getNotify:'/notify',
+        commentList:'/comments'
     }
 }

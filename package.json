@@ -13,7 +13,8 @@
 		"react-native-splash-screen": "^2.0.0",
 		"react-native-swiper": "^1.5.4",
 		"react-native-tab-navigator": "^0.3.3",
-		"react-native-vector-icons": "^4.0.0"
+		"react-native-vector-icons": "^4.0.0",
+		"react-native-photo-view": "^1.2.0"
 	},
 	"devDependencies": {
 		"babel-jest": "18.0.0",

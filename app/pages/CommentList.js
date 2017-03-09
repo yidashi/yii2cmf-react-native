@@ -15,7 +15,7 @@ import {
 
 import CommentItem from './CommentItem';
 import GlobalConfig from '../../GlobalConfig';
-const API_URL = GlobalConfig.apiUrl.commentList;
+const API_URL = GlobalConfig.apiHost + GlobalConfig.apiMap.commentList;
 
 export default class CommentList extends Component
 {
@@ -38,7 +38,8 @@ export default class CommentList extends Component
             comment: null,
             commentBarVisible: false,
             page:1,
-            pageCount: 0
+            pageCount: 0,
+            newCommentVisible: false
         };
     }
 
@@ -63,7 +64,7 @@ export default class CommentList extends Component
   
     renderLoadingView() {
         return (
-            <View style={styles.container}>
+            <View style={styles.loading}>
                 <Text>Loading...</Text>
             </View>
 
@@ -123,16 +124,17 @@ export default class CommentList extends Component
   renderCommentList() {
 
       return (
-        <TouchableOpacity style={styles.commentList} onPress={this.props.push2FeedDetail}>
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
+            renderRow={(comment) => this.renderRow(comment)}
           />
-        </TouchableOpacity>
       );
 
   }
 
+  show() {
+        this.props.show();
+  }
   renderRow(comment) {
     if(comment == null || comment == undefined) {
       return (<View />);
@@ -142,6 +144,7 @@ export default class CommentList extends Component
           comment={comment}
           showCommentBar={true}
           hideCommentBar={false}
+          onPress={() => this.props.show()}
         />
     );
   }
@@ -149,33 +152,19 @@ export default class CommentList extends Component
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  commentList: {
-    padding: 10,
-    paddingTop: 0,
-    backgroundColor: '#F3F3F3',
-  },
-  feedActions:{
-    //borderWidth: 1,
-    //borderTopColor: '#EEEEEE',
-    flex :1,
-    flexDirection: 'row',
-    padding: 20,
-    paddingBottom: 5,
-  },
-  feedActionComment: {
-    width: 40,
-    padding: 5,
-    marginRight: 5,
-  },
-  feedActionLike: {
-    width: 40,
-    padding: 5,
-  }
+    loading: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        padding: 10,
+        marginLeft: 10,
+        marginRight: 10,
+        marginVertical: 5,
+        borderColor: '#dddddd',
+        borderStyle: null,
+        borderWidth: 0.5,
+        borderRadius: 2,
+    },
 });

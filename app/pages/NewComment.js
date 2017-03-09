@@ -14,17 +14,17 @@ export default class NewComment extends Component
 {
   constructor(props) {
       super(props);
-     this.state = {
-      replyModalVisible: false,
-      commentObjectType: this.props.object_type,
-      commentObjectID: this.props.object_id,
-      commentContent: null,
-      commentParent: 0,
-    }
-  },
+      this.state = {
+        replyModalVisible: false,
+        commentObjectType: this.props.object_type,
+        commentObjectID: this.props.object_id,
+        commentContent: null,
+        commentParent: 0,
+      }
+  }
 
   cancle() {
-    this.props.callbackParentSetReplyModalInVisible();
+    this.props.hide();
   }
 
   send() {
@@ -32,7 +32,7 @@ export default class NewComment extends Component
     this.props.callbackParentPushNewComment();
     return ;
 
-    var options = {
+    let options = {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -52,40 +52,38 @@ export default class NewComment extends Component
         this.cancle();
       }).done();
 
-  },
+  }
 
   render() {
     return (
       <Modal
-        animated={true}
         animationType={"slide"}
         transparent={false}
         visible={this.props.visible}
-        onRequestClose={() => {alert("Modal has been closed.")}}
+        onRequestClose={() => {}}
         >
 
         <View style={{flex: 1, flexDirection: 'column'}}>
           <View style={styles.nav}>
             <View style={styles.cancleBtn} >
-              <Text onPress={this.cancle}>cancle</Text>
+              <Text onPress={() => this.cancle()}>取消</Text>
             </View>
-            <View style={styles.title}><Text style={{textAlign: 'center'}}>newFeed</Text></View>
-            <View style={styles.sendBtn}><Text onPress={this.send} style={{textAlign: 'right'}}>send</Text></View>
+            <View style={styles.sendBtn}><Text onPress={() => this.send} style={{textAlign: 'right'}}>发射</Text></View>
           </View>
-          <View style={{flex:1, backgroundColor: 'skyblue'}} />
-          <View style={{height: 50, backgroundColor: 'steelblue'}} />
+          <View style={{flex:1}} />
+          <View style={{height: 50}} />
         </View>
       </Modal>
 
 
     );
-  },
+  }
 
-});
+}
 
 
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   nav: {
     //flex: 1,
     flexDirection: 'row',
@@ -95,12 +93,9 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
   cancleBtn: {
-    width: 50,
+    flex: 1,
   },
   sendBtn: {
-    width: 50,
-  },
-  title: {
-    flex: 1,
+      flex: 1,
   },
 });

@@ -21,10 +21,10 @@ import {
     RefreshControl,
     AsyncStorage
 } from 'react-native'
-import LocalImg from '../images'
 import NavBar from '../components/NavBar'
 import Item from '../components/Item'
-import Setting from './Setting'
+import Setting from './Setting';
+import Alarm from './Alarm';
 import UserProfile from './UserProfile'
 import px2dp from '../util'
 
@@ -61,6 +61,12 @@ export default class My extends Component {
                 args: { data }
             })
         }
+    }
+    leftPress(){
+        this.props.navigator.push({
+            component: Alarm,
+            params: {}
+        });
     }
     rightPress(){
         this.props.navigator.push({
@@ -108,6 +114,8 @@ export default class My extends Component {
             <View style={{flex: 1, backgroundColor: "#f3f3f3"}}>
                 <NavBar
                     title="我的"
+                    leftIcon="ios-notifications-outline"
+                    leftPress={this.leftPress.bind(this)}
                     rightIcon="ios-settings-outline"
                     rightPress={this.rightPress.bind(this)}
                 />

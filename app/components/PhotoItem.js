@@ -7,25 +7,34 @@ import {
     TouchableOpacity,
     StyleSheet
 } from 'react-native';
+import PhotoDetail from '../pages/PhotoDetail';
 
-export default class ArticleItem extends Component
+export default class PhotoItem extends Component
 {
+    goDetail(article) {
+        this.props.navigator.push({
+            component: PhotoDetail,
+            params:{
+                articleID:article.id
+            }
+        })
+    }
+
     render() {
         let article = this.props.article;
-        let image;
-        if (article.cover != '') {
-            image = <Image
-                source={{uri: article.cover}}
-                style={styles.cover}
-            />;
-        }
         return (
             <TouchableOpacity
-                onPress={() => this.props.onPress()}
+                onPress={() => this.goDetail(article)}
                 >
                 <View style={styles.row}>
                     <Text style={styles.title}>{article.title}</Text>
-                    {image}
+                    <View style={{flex:1, flexDirection: 'row', marginTop: 5}}>
+                    {
+                        article.data.part_photos.map((item, i) => {
+                            return (<Image source={{uri: item.url}} key={i} style={styles.cover}/>);
+                        })
+                    }
+                    </View>
                 </View>
             </TouchableOpacity>
         );
@@ -44,9 +53,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flex: 1,
-    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
     padding: 10,
     marginLeft: 10,

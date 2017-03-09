@@ -8,10 +8,10 @@ import {
     Dimensions,
     RefreshControl
 } from 'react-native';
-import ArticleItem from './ArticleItem';
-import ArticleDetail from '../pages/ArticleDetail';
+import BaseItem from './BaseItem';
+import PhotoItem from './PhotoItem';
 import GlobalConfig from '../../GlobalConfig';
-var API_URL = GlobalConfig.apiHost + GlobalConfig.apiMap.articleList;
+const API_URL = GlobalConfig.apiHost + GlobalConfig.apiMap.articleList;
 export default class ArticleList extends Component
 {
     constructor(props) {
@@ -21,7 +21,6 @@ export default class ArticleList extends Component
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2,
             }),
-            isLoading: true,
             isLoadingMore: false,
             loaded: false,
             isRefreshing: false,
@@ -33,7 +32,7 @@ export default class ArticleList extends Component
         this.fetchData();
     }
     fetchData() {
-        REQUEST_URL = API_URL + '?module=base&page=' + this.state.page;
+        REQUEST_URL = API_URL + '?module=' + this.props.module + '&expand=data&page=' + this.state.page;
         fetch(REQUEST_URL)
             .then((response) => response.json())
             .then((responseData) => {
@@ -41,7 +40,7 @@ export default class ArticleList extends Component
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(this.items),
                     pageCount:responseData._meta.pageCount,
-                    isLoading: false,
+                    loaded: true,
                     isLoadingMore:false
                 });
             })
@@ -56,6 +55,20 @@ export default class ArticleList extends Component
                 </Text>
             </View>
         );
+    }
+    onRefresh() {
+        this.items = [];
+        this.state = {
+            dataSource: new ListView.DataSource({
+                rowHasChanged: (row1, row2) => row1 !== row2,
+            }),
+            isLoadingMore: false,
+            loaded: false,
+            isRefreshing: false,
+            page:1,
+            pageCount: 0
+        };
+        this.fetchData();
     }
     onEndReached() {
         if (this.state.isLoadingMore || this.state.page >= this.state.pageCount) {
@@ -84,7 +97,7 @@ export default class ArticleList extends Component
         }
     }
     render() {
-        if(this.state.isLoading) {
+        if(!this.state.loaded) {
             return this.renderLoadingView();
         }
 
@@ -98,7 +111,7 @@ export default class ArticleList extends Component
                 refreshControl={
                 <RefreshControl
                   refreshing={this.state.isRefreshing}
-                  onRefresh={this.onRefresh}
+                  onRefresh={() => this.onRefresh()}
                   tintColor="#F3F3F3"
                   title="刷新中..."
                   titleColor="#9B9B9B"
@@ -110,20 +123,25 @@ export default class ArticleList extends Component
         );
     }
     renderItem(article) {
-        return (
-            <ArticleItem
-                article={article}
-                onPress={() => this.goDetail(article)}
-            />
-        );
-    }
-    goDetail(article) {
-        this.props.navigator.push({
-            component: ArticleDetail,
-            params:{
-                articleID:article.id
-            }
-        })
+        switch (this.props.module) {
+            case 'base':
+                return (
+                    <BaseItem
+                        article={article}
+                        navigator={this.props.navigator}
+                    />
+                );
+                break;
+            case 'photo':
+                return (
+                    <PhotoItem
+                        article={article}
+                        navigator={this.props.navigator}
+                    />
+                );
+                break;
+        }
+
     }
 }
 

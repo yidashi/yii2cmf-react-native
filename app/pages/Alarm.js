@@ -77,7 +77,7 @@ export default class Alarm extends Component
   render() {
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
-        <NavBar title="消息"/>
+        <NavBar title="消息" leftIcon="ios-arrow-back" leftPress={() => this.props.navigator.pop()}/>
           <ListView
               dataSource={this.state.dataSource}
               renderRow={this.renderNotification.bind(this)}

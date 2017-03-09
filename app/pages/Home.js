@@ -8,8 +8,8 @@ export default class Home extends Component {
         return (
             <View style={{flex: 1, backgroundColor: "#f3f3f3"}}>
                 <ScrollableTabView renderTabBar={() => <TabViewBar/>}>
-                    <ArticleList navigator={this.props.navigator} tabLabel="文章"/>
-                    <ArticleList navigator={this.props.navigator} tabLabel="相册"/>
+                    <ArticleList navigator={this.props.navigator} tabLabel="文章" module="base"/>
+                    <ArticleList navigator={this.props.navigator} tabLabel="相册" module="photo"/>
                 </ScrollableTabView>
             </View>
         )

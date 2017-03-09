@@ -20,8 +20,8 @@ import px2dp from '../util'
 let {width, height} = Dimensions.get('window');
 import Home from '../pages/Home';
 import Discover from '../pages/Discover';
-import Alarm from '../pages/Alarm';
 import My from '../pages/My';
+import Suggest from '../pages/Suggest';
 import Login from '../pages/Login';
 
 export default class TabView extends Component {
@@ -42,7 +42,7 @@ export default class TabView extends Component {
     this.tabNames = [
         { title: "首页", icon: "ios-home-outline", tab: "Home", component: <Home {...this.props}/>, needLogin: false},
         // { title: "投稿", icon: "ios-add-circle-outline", tab: "Discover", component: <Discover {...this.props}/>, needLogin: true},
-        { title: "消息", icon: "ios-notifications-outline", tab: "Discover", component: <Alarm {...this.props}/>, needLogin: true},
+        { title: "留言板", icon: "ios-clipboard-outline", tab: "Suggest", component: <Suggest {...this.props}/>, needLogin: true},
         { title: "我的", icon: "ios-contact-outline", tab: "My", component: <My {...this.props}/>, needLogin: true},
     ];
     TabView.hideTabBar = TabView.hideTabBar.bind(this);
@@ -54,11 +54,6 @@ export default class TabView extends Component {
   static hideTabBar(time){
     this.setState({hideTabBar: true})
   }
-  static logout() {
-        this.setState({
-            isLogin: false,
-        });
-    }
     refresh(isLogin) {
         this.setState({
             isLogin: isLogin,

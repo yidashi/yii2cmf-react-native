@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import NavBar from '../components/NavBar'
 import Item from '../components/Item';
-import TabView from '../components/TabView';
+import Wrapper from '../components/Wrapper';
 //FontAwesome
 export default class Setting extends Component {
   constructor(props){
@@ -20,8 +20,7 @@ export default class Setting extends Component {
   }
   logout() {
       AsyncStorage.removeItem('token', () => {
-          this.props.navigator.popToTop();
-          TabView.logout.bind(TabView);
+          this.props.navigator.resetTo({component: Wrapper});
       });
 
   }

@@ -26,16 +26,11 @@ export default class CommentItem extends Component
         };
     }
 
-
-  onPress() {
-    getToken(this.checkLogin);
-  }
-
   render(){
     return (
       <View>
         {this.state.loginRegPageVisible && <PopupLoginRegPage hideLoginRegPage={this.hideLoginRegPage} refresh={this.refresh}/>}
-        <TouchableOpacity onPress={this.onPress}>
+          <TouchableOpacity onPress={() => this.props.onPress()}>
           <View style={styles.commentBox}>
             <Image style={styles.avatar} source={{uri:this.props.comment.author.avatar}} />
             <View>
@@ -43,23 +38,22 @@ export default class CommentItem extends Component
                 <Text style={styles.comment}>{this.props.comment.content}</Text>
             </View>
           </View>
-            {this.props.comment.sons ?
-
-                        this.props.comment.sons.map((item, i) => {
-                            return (
-                                <View style={styles.sonBox} key={i}>
-                                <CommentItem
-                                    key={i}
-                                    comment={item}
-                                    showCommentBar={true}
-                                    hideCommentBar={false}
-                                />
-                                </View>
-                            )
-                        })
-                 : <View/>
-            }
-        </TouchableOpacity>
+          </TouchableOpacity>
+          {this.props.comment.sons ?
+              this.props.comment.sons.map((item, i) => {
+                  return (
+                      <View style={styles.sonBox} key={i}>
+                          <CommentItem
+                              key={i}
+                              comment={item}
+                              showCommentBar={true}
+                              hideCommentBar={false}
+                          />
+                      </View>
+                  )
+              })
+              : <View/>
+          }
       </View>
     );
   }
@@ -69,8 +63,8 @@ const styles = StyleSheet.create({
   commentBox: {
     flex: 1,
     flexDirection: 'row',
-    //borderColor: 'black',
-    //borderWidth: 1,
+    // borderColor: 'black',
+    // borderWidth: 1,
     padding: 10,
   },
     sonBox: {
